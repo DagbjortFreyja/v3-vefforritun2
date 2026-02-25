@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-// ---- TEST 1: slugify logic ----
+// Test 1
 function slugify(input: string): string {
   return input
     .toLowerCase()
@@ -16,7 +16,7 @@ test("slugify creates correct slug", () => {
   assert.equal(result, "hello-world-news");
 });
 
-// ---- TEST 2: paging defaults ----
+// Test 2
 test("paging default values", () => {
   const limit = 10;
   const offset = 0;

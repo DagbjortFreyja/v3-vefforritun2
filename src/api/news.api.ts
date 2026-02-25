@@ -6,13 +6,11 @@ import xss from "xss";
 
 export const app = new Hono();
 
-// paging: ?limit=10&offset=0
 const pagingSchema = z.object({
   limit: z.coerce.number().min(1).max(100).optional().default(10),
   offset: z.coerce.number().min(0).max(100000).optional().default(0),
 });
 
-// body schemas
 const createNewsSchema = z.object({
   title: z.string().trim().min(1).max(200),
   excerpt: z.string().trim().min(1).max(500),
@@ -24,7 +22,6 @@ const createNewsSchema = z.object({
 
 const updateNewsSchema = createNewsSchema.partial();
 
-// tiny slugify helper (no extra deps)
 function slugify(input: string): string {
   return input
     .toLowerCase()
@@ -34,7 +31,6 @@ function slugify(input: string): string {
     .slice(0, 200);
 }
 
-// GET /news (paginated)
 app.get("/", zValidator("query", pagingSchema), async (c) => {
   const { limit, offset } = c.req.valid("query");
 
@@ -43,7 +39,7 @@ app.get("/", zValidator("query", pagingSchema), async (c) => {
       prisma.news.findMany({
         skip: offset,
         take: limit,
-        orderBy: { id: "desc" }, // "nýjustu" í einfaldri mynd
+        orderBy: { id: "desc" },
         include: { author: true },
       }),
       prisma.news.count(),
@@ -59,7 +55,7 @@ app.get("/", zValidator("query", pagingSchema), async (c) => {
   }
 });
 
-// GET /news/:slug
+
 app.get("/:slug", async (c) => {
   const slug = c.req.param("slug");
 
@@ -80,7 +76,7 @@ app.get("/:slug", async (c) => {
   }
 });
 
-// POST /news
+
 app.post("/", zValidator("json", createNewsSchema), async (c) => {
   const body = c.req.valid("json");
 
@@ -91,7 +87,7 @@ app.post("/", zValidator("json", createNewsSchema), async (c) => {
   const slug = body.slug ? slugify(body.slug) : slugify(safeTitle);
 
   try {
-    // optional: ensure author exists
+    
     const author = await prisma.author.findUnique({
       where: { id: body.authorId },
       select: { id: true },

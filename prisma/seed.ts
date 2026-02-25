@@ -33,11 +33,11 @@ async function main() {
       excerpt: `This is the excerpt for news ${n}.`,
       content: `This is the full content for news ${n}. Lorem ipsum dolor sit amet...`,
       published: n % 2 === 0,
-      authorId: authors[i % authors.length].id, // dreifum á höfunda
+      authorId: authors[i % authors.length].id, 
     }
   })
 
-  // upsert á slug svo það sé öruggt að keyra aftur
+  
   for (const item of newsData) {
     await prisma.news.upsert({
       where: { slug: item.slug },
